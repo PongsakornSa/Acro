@@ -1,0 +1,428 @@
+<title>Acro เข็มทิศอาชีพ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centered "stage" card; the compass guide sits on top, the question/answers below, like a game screen */
+:root {
+  --bg: #e9f0ee;
+  --surface: #fbfdfc;
+  --ink: #13263a;
+  --muted: #5a6b78;
+  --line: #cfdcd8;
+  --accent: #e8590c;
+  --accent-soft: #fde3d3;
+  --teal: #0f7b6c;
+  --teal-soft: #d4ece7;
+  --display: "Mitr", "Noto Sans Thai", "Leelawadee UI", sans-serif;
+  --body: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1a22; --surface: #17242f; --ink: #e7eff0; --muted: #9db0ba; --line: #2a3b48;
+    --accent: #ff7a33; --accent-soft: #3b2418; --teal: #3fc1ad; --teal-soft: #173631; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1a22; --surface: #17242f; --ink: #e7eff0; --muted: #9db0ba; --line: #2a3b48;
+  --accent: #ff7a33; --accent-soft: #3b2418; --teal: #3fc1ad; --teal-soft: #173631; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+}
+h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; line-height: 1.3; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { font-family: var(--display); font-size: 20px; letter-spacing: .02em; }
+.brand b { color: var(--accent); font-weight: 600; }
+.tag { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; gap: 20px; }
+.guide { display: flex; align-items: center; gap: 16px; }
+.compass { width: 84px; height: 84px; flex: none; }
+.compass .needle { transform-origin: 50px 50px; transition: transform .7s cubic-bezier(.3,1.6,.5,1); }
+.bubble { background: var(--teal-soft); color: var(--ink); border-radius: 14px; padding: 10px 14px; font-size: 15px; min-width: 0; }
+.qno { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.question { font-size: clamp(22px, 5.4vw, 28px); }
+.answers { display: grid; gap: 8px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.ans { background: transparent; border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 16px; text-align: left; display: flex; align-items: center; gap: 12px; transition: border-color .15s, background .15s; }
+.ans:hover { border-color: var(--teal); background: var(--teal-soft); }
+.ans kbd { font-family: var(--body); font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn { background: var(--accent); color: #fff; border: 0; border-radius: 12px; padding: 12px 20px; font-family: var(--display); font-size: 17px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.link { background: none; border: 0; color: var(--muted); text-decoration: underline; padding: 4px 0; font-size: 14px; }
+.meter { display: flex; flex-direction: column; gap: 6px; }
+.meter .bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.meter .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--accent)); transition: width .5s; }
+.meter .lbl { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+label { font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+input[type=text] { font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg button { border: 1.5px solid var(--line); background: transparent; border-radius: 12px; padding: 12px; font-family: var(--display); }
+.seg button[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); flex-direction: row; }
+.consent input { margin-top: 5px; accent-color: var(--teal); }
+.note { font-size: 13px; color: var(--muted); }
+/* result card: 9:16, designed to be screenshotted for IG Story */
+.card { aspect-ratio: 9 / 16; max-width: 100%; width: 340px; margin: 0 auto; border-radius: 22px; padding: 26px 22px; display: flex; flex-direction: column; gap: 14px;
+  background: radial-gradient(120% 70% at 100% 0%, var(--accent-soft), transparent 60%), radial-gradient(90% 60% at 0% 100%, var(--teal-soft), transparent 60%), var(--surface);
+  border: 1px solid var(--line); overflow: hidden; }
+.card .who { font-size: 14px; color: var(--muted); }
+.card .job { font-family: var(--display); font-size: 34px; line-height: 1.15; color: var(--accent); }
+.card .pct { font-family: var(--display); font-size: 15px; color: var(--teal); font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; background: var(--teal-soft); border-radius: 99px; padding: 3px 10px; }
+.path { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.path li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.path li span { width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--surface); font-size: 12px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.card .foot { margin-top: auto; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.alts { display: grid; gap: 8px; }
+.alt { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; font-variant-numeric: tabular-nums; }
+.fade { animation: fade .35s ease both; }
+@keyframes fade { from { opacity: .3; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade { animation: none; } .compass .needle, .meter .fill { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><b>Acro</b> เข็มทิศอาชีพ</div>
+    <div class="tag">ต้นแบบ v0.1</div>
+  </header>
+
+  <main class="stage" id="stage" aria-live="polite">
+    <div class="guide">
+      <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="var(--surface)" stroke="var(--ink)" stroke-width="3"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="2 6"/>
+        <text x="50" y="18" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="Mitr">อนาคต</text>
+        <g class="needle" id="needle">
+          <polygon points="50,14 57,50 50,56 43,50" fill="var(--accent)"/>
+          <polygon points="50,86 57,50 50,44 43,50" fill="var(--ink)"/>
+        </g>
+        <circle cx="50" cy="50" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+      </svg>
+      <div class="bubble" id="say">สวัสดี! เราชื่อ "น้องเข็ม" ตอบคำถามว่าชอบหรือไม่ชอบอะไร แล้วเราจะทายอาชีพที่ใช่ให้</div>
+    </div>
+    <div id="view"></div>
+  </main>
+
+  <p class="note">ต้นแบบนี้ไม่ส่งข้อมูลออกจากเครื่อง ไม่ต้องสมัครสมาชิก คำตอบอยู่ในหน้านี้จนกว่าจะปิดหรือเริ่มใหม่</p>
+</div>
+
+<script>
+// ---------- data ----------
+// q: คำถาม, s: ป้ายสั้นสำหรับเหตุผลบนการ์ดผลลัพธ์
+const QUESTIONS = [
+  { id: "math", q: "คุณชอบแก้โจทย์คณิตศาสตร์ไหม?", s: "ชอบคิดเลข" },
+  { id: "science", q: "คุณชอบทำการทดลองวิทยาศาสตร์ไหม?", s: "ชอบทดลอง" },
+  { id: "computer", q: "คุณชอบแกะว่าแอปหรือโปรแกรมในคอมทำงานยังไงไหม?", s: "ชอบคอมพิวเตอร์" },
+  { id: "games", q: "เวลาเล่นเกม คุณเคยอยากสร้างเกมเองไหม?", s: "อยากสร้างเกม" },
+  { id: "draw", q: "คุณชอบวาดรูปหรือออกแบบของสวยๆ ไหม?", s: "ชอบวาด/ออกแบบ" },
+  { id: "build", q: "คุณชอบต่อเลโก้ ประกอบ หรือซ่อมของไหม?", s: "ชอบประกอบของ" },
+  { id: "machines", q: "คุณชอบเครื่องยนต์ รถ หรือเครื่องบินไหม?", s: "ชอบเครื่องยนต์" },
+  { id: "help", q: "คุณชอบช่วยเหลือคนที่กำลังลำบากไหม?", s: "ชอบช่วยคน" },
+  { id: "care", q: "คุณชอบดูแลคนป่วยหรือคนเจ็บ โดยไม่กลัวเลือดไหม?", s: "ดูแลคนป่วยได้" },
+  { id: "listen", q: "คุณชอบรับฟังเวลาเพื่อนมีปัญหาไหม?", s: "เป็นผู้ฟังที่ดี" },
+  { id: "animals", q: "คุณชอบอยู่กับสัตว์ไหม?", s: "รักสัตว์" },
+  { id: "plants", q: "คุณชอบปลูกต้นไม้หรือดูแลสวนไหม?", s: "ชอบต้นไม้" },
+  { id: "outdoor", q: "คุณชอบทำกิจกรรมกลางแจ้งมากกว่าอยู่ในห้องไหม?", s: "ชอบอยู่กลางแจ้ง" },
+  { id: "sport", q: "คุณชอบเล่นกีฬาหรือออกกำลังกายไหม?", s: "ชอบเล่นกีฬา" },
+  { id: "music", q: "คุณชอบเล่นดนตรีหรือร้องเพลงไหม?", s: "ชอบดนตรี" },
+  { id: "perform", q: "คุณชอบพูดหรือแสดงต่อหน้าคนเยอะๆ ไหม?", s: "กล้าแสดงออก" },
+  { id: "social", q: "คุณชอบทำคอนเทนต์ลงโซเชียลไหม?", s: "ชอบทำคอนเทนต์" },
+  { id: "write", q: "คุณชอบเขียนเรื่องหรือเล่าเรื่องไหม?", s: "ชอบเล่าเรื่อง" },
+  { id: "read", q: "คุณชอบอ่านหนังสือเล่มหนาๆ ไหม?", s: "ชอบอ่าน" },
+  { id: "debate", q: "คุณชอบหาเหตุผลมาเถียงให้ชนะไหม?", s: "ชอบใช้เหตุผล" },
+  { id: "rules", q: "คุณชอบทำงานละเอียด เป็นระเบียบ ตามขั้นตอนไหม?", s: "ละเอียดรอบคอบ" },
+  { id: "money", q: "คุณชอบวางแผนเรื่องเงินหรือลองขายของไหม?", s: "หัวการค้า" },
+  { id: "lead", q: "คุณชอบเป็นหัวหน้ากลุ่มเวลาทำงานไหม?", s: "เป็นผู้นำ" },
+  { id: "teach", q: "คุณชอบอธิบายบทเรียนให้เพื่อนฟังไหม?", s: "ชอบสอน" },
+  { id: "cook", q: "คุณชอบทำอาหารหรือขนมไหม?", s: "ชอบทำอาหาร" },
+  { id: "travel", q: "คุณชอบเดินทางไปที่ใหม่ๆ ไหม?", s: "ชอบเดินทาง" },
+  { id: "risk", q: "คุณชอบลองสิ่งใหม่ แม้จะเสี่ยงไหม?", s: "กล้าเสี่ยง" },
+  { id: "calm", q: "คุณชอบทำงานเงียบๆ คนเดียวนานๆ ไหม?", s: "โฟกัสได้นาน" },
+];
+
+// e: ระดับที่คนในอาชีพนี้น่าจะตอบ "ชอบ" (1 = ชอบมาก, -1 = ไม่ชอบ) ข้อที่ไม่ระบุใช้ค่า DEFAULT_E
+const DEFAULT_E = -0.25;
+const CAREERS = [
+  { id: "doctor", name: "แพทย์", e: { science: 1, care: 1, help: .8, read: .6, math: .4, rules: .4 },
+    path: ["ม.ปลาย สายวิทย์-คณิต", "สอบ กสพท. เข้าคณะแพทยศาสตร์ 6 ปี", "ใช้ทุน แล้วเรียนต่อเฉพาะทาง"] },
+  { id: "nurse", name: "พยาบาล", e: { care: 1, help: 1, listen: .7, science: .4, rules: .4 },
+    path: ["ม.ปลาย สายวิทย์-คณิต", "คณะพยาบาลศาสตร์ 4 ปี", "สอบใบอนุญาตประกอบวิชาชีพ"] },
+  { id: "swe", name: "วิศวกรซอฟต์แวร์", e: { computer: 1, math: .8, calm: .6, games: .5, build: .4 },
+    path: ["ฝึกเขียนโค้ดตั้งแต่ ม.ต้น (Python, Scratch)", "วิศวะคอมฯ หรือวิทยาการคอมพิวเตอร์", "ทำโปรเจกต์จริง ฝึกงานบริษัทเทค"] },
+  { id: "data", name: "นักวิทยาศาสตร์ข้อมูล", e: { math: 1, computer: .8, science: .5, calm: .5, rules: .3, debate: .2 },
+    path: ["เก่งคณิต-สถิติ", "สถิติ วิทย์คอมฯ หรือวิศวะ", "ฝึก Python/SQL ทำโปรเจกต์วิเคราะห์ข้อมูล"] },
+  { id: "gamedev", name: "นักพัฒนาเกม", e: { games: 1, computer: .9, draw: .5, risk: .3, write: .2 },
+    path: ["ลองทำเกมเล็กๆ ด้วย Roblox/Godot", "วิทย์คอมฯ หรือ Game & Interactive Media", "ส่งผลงานแข่ง Game Jam"] },
+  { id: "architect", name: "สถาปนิก", e: { draw: .9, build: .9, math: .5, travel: .3, rules: .2 },
+    path: ["ฝึกวาดเส้น perspective", "สอบความถนัดสถาปัตย์ เข้าคณะสถาปัตยกรรม 5 ปี", "สอบใบประกอบวิชาชีพ"] },
+  { id: "designer", name: "นักออกแบบกราฟิก", e: { draw: 1, social: .5, computer: .4, calm: .3, risk: .2 },
+    path: ["ทำพอร์ตงานวาด/ออกแบบ", "นิเทศศิลป์ หรือออกแบบ", "รับงานฟรีแลนซ์ สร้างพอร์ต"] },
+  { id: "teacher", name: "ครู", e: { teach: 1, help: .7, read: .5, perform: .4, listen: .5 },
+    path: ["เลือกวิชาที่ชอบที่สุด", "คณะครุศาสตร์/ศึกษาศาสตร์", "สอบใบประกอบวิชาชีพครู"] },
+  { id: "accountant", name: "นักบัญชี", e: { money: .8, math: .8, rules: 1, calm: .5, risk: -.6 },
+    path: ["ม.ปลาย สายวิทย์-คณิต หรือศิลป์-คำนวณ", "คณะบัญชี 4 ปี", "สอบผู้สอบบัญชีรับอนุญาต (CPA)"] },
+  { id: "lawyer", name: "ทนายความ", e: { debate: 1, read: .9, write: .5, rules: .6, perform: .4 },
+    path: ["ฝึกอ่านจับใจความ ฝึกโต้วาที", "คณะนิติศาสตร์ 4 ปี", "สอบตั๋วทนาย หรือเนติบัณฑิต"] },
+  { id: "chef", name: "เชฟ", e: { cook: 1, risk: .3, perform: .2, lead: .2 },
+    path: ["ลองทำเมนูใหม่ทุกสัปดาห์", "โรงเรียนสอนทำอาหาร หรือคณะอุตสาหกรรมเกษตร/การโรงแรม", "ฝึกงานในครัวร้านอาหารจริง"] },
+  { id: "athlete", name: "นักกีฬาอาชีพ", e: { sport: 1, outdoor: .8, perform: .5, risk: .3, calm: -.5 },
+    path: ["เลือกกีฬาหนึ่งชนิด ซ้อมสม่ำเสมอ", "เข้าทีมโรงเรียน/สโมสร หรือโรงเรียนกีฬา", "ลงแข่งระดับจังหวัดถึงประเทศ"] },
+  { id: "vet", name: "สัตวแพทย์", e: { animals: 1, science: .8, care: .7, help: .5 },
+    path: ["ม.ปลาย สายวิทย์-คณิต", "คณะสัตวแพทยศาสตร์ 6 ปี", "สอบใบอนุญาตประกอบวิชาชีพ"] },
+  { id: "creator", name: "ครีเอเตอร์ / นักการตลาด", e: { social: 1, perform: .8, write: .4, risk: .6, draw: .2 },
+    path: ["ลองทำคอนเทนต์สม่ำเสมอ", "นิเทศศาสตร์ หรือการตลาด", "เรียนรู้การอ่านสถิติผู้ชม"] },
+  { id: "founder", name: "ผู้ประกอบการ", e: { money: 1, lead: 1, risk: 1, debate: .4, social: .3 },
+    path: ["ลองขายของจริงสักครั้ง", "บริหารธุรกิจ หรือคณะที่ตรงกับธุรกิจที่อยากทำ", "เริ่มธุรกิจเล็กๆ แล้วค่อยขยาย"] },
+  { id: "pilot", name: "นักบิน", e: { machines: 1, travel: 1, math: .5, rules: .5, risk: .3 },
+    path: ["เก่งฟิสิกส์ คณิต อังกฤษ", "โรงเรียนการบิน หรือทุนนักบินฝึกหัดของสายการบิน", "สะสมชั่วโมงบิน"] },
+  { id: "engineer", name: "วิศวกรเครื่องกล", e: { machines: 1, build: 1, math: .7, science: .6 },
+    path: ["ม.ปลาย สายวิทย์-คณิต", "คณะวิศวกรรมศาสตร์ สาขาเครื่องกล", "สอบใบ กว."] },
+  { id: "psych", name: "นักจิตวิทยา", e: { listen: 1, help: .8, read: .6, science: .3, calm: .2 },
+    path: ["อ่านเรื่องพฤติกรรมคน", "คณะจิตวิทยา", "เรียนต่อจิตวิทยาคลินิก/การปรึกษา"] },
+  { id: "musician", name: "นักดนตรี", e: { music: 1, perform: .8, calm: .2, risk: .3 },
+    path: ["ซ้อมเครื่องดนตรีทุกวัน", "วิทยาลัยดุริยางคศิลป์ หรือคณะดนตรี", "เล่นโชว์ ปล่อยเพลงของตัวเอง"] },
+  { id: "writer", name: "นักเขียน / นักข่าว", e: { write: 1, read: 1, calm: .4, travel: .3, debate: .2 },
+    path: ["เขียนทุกวัน ลองลงแพลตฟอร์มนิยาย/บล็อก", "อักษรศาสตร์ หรือวารสารศาสตร์", "ส่งประกวดหรือฝึกงานกองบรรณาธิการ"] },
+  { id: "agri", name: "เกษตรกรสมัยใหม่", e: { plants: 1, outdoor: .9, science: .5, animals: .4, money: .3 },
+    path: ["ลองปลูกผักในบ้าน", "คณะเกษตรศาสตร์", "ใช้เทคโนโลยีเช่นโดรน/IoT กับฟาร์ม"] },
+  { id: "scientist", name: "นักวิทยาศาสตร์", e: { science: 1, math: .6, calm: .6, read: .5, rules: .2 },
+    path: ["ทำโครงงานวิทยาศาสตร์", "คณะวิทยาศาสตร์ สาขาที่ชอบ", "เรียนต่อ ป.โท/เอก ทำวิจัย"] },
+];
+
+const ANSWERS = [
+  { v: 1, t: "ชอบมาก" },
+  { v: .5, t: "ค่อนข้างชอบ" },
+  { v: 0, t: "ไม่แน่ใจ / เฉยๆ" },
+  { v: -.5, t: "ไม่ค่อยชอบ" },
+  { v: -1, t: "ไม่ชอบเลย" },
+];
+
+const SIGMA = 0.6, FLOOR = 0.04;     // ยิ่ง SIGMA เล็ก ยิ่งเชื่อคำตอบแต่ละข้อมาก
+const GUESS_AT = 0.55, MIN_Q = 7, MAX_Q = 22;
+
+// ---------- engine ----------
+const ev = (c, qid) => c.e[qid] ?? DEFAULT_E;
+
+function posterior(history, rejected) {
+  let w = CAREERS.map(c => {
+    if (rejected.has(c.id)) return 0;
+    let p = 1;
+    for (const [qid, a] of history) {
+      const d = a - ev(c, qid);
+      p *= FLOOR + Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
+    }
+    return p;
+  });
+  const sum = w.reduce((a, b) => a + b, 0) || 1;
+  return w.map(x => x / sum);
+}
+
+// เลือกคำถามที่แบ่งกลุ่มอาชีพที่ยังเป็นไปได้ได้ดีที่สุด (variance ของคำตอบที่คาดหวัง)
+function nextQuestion(p, asked) {
+  const scored = QUESTIONS.filter(q => !asked.has(q.id)).map(q => {
+    let mu = 0; CAREERS.forEach((c, i) => mu += p[i] * ev(c, q.id));
+    let v = 0; CAREERS.forEach((c, i) => v += p[i] * (ev(c, q.id) - mu) ** 2);
+    return { q, v };
+  }).sort((a, b) => b.v - a.v);
+  if (!scored.length) return null;
+  const pool = scored.slice(0, Math.min(3, scored.length)).filter(s => s.v >= scored[0].v * .85);
+  return pool[Math.floor(Math.random() * pool.length)].q;
+}
+
+function ranked(p) {
+  return CAREERS.map((c, i) => ({ c, p: p[i] })).filter(x => x.p > 0).sort((a, b) => b.p - a.p);
+}
+
+function reasons(c, history) {
+  return history.map(([qid, a]) => ({ qid, s: a * ev(c, qid) }))
+    .filter(x => x.s >= .3).sort((a, b) => b.s - a.s).slice(0, 3)
+    .map(x => QUESTIONS.find(q => q.id === x.qid).s);
+}
+
+// event taxonomy จากโน้ต: ต้นแบบนี้แค่ log ลง console
+function track(name, data = {}) { console.info("[track]", name, data); }
+
+// ---------- state + views ----------
+let S;
+const $view = document.getElementById("view");
+const $say = document.getElementById("say");
+const $needle = document.getElementById("needle");
+let needleDeg = 0;
+const spin = deg => { needleDeg = deg; $needle.style.transform = `rotate(${deg}deg)`; };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+function reset() {
+  S = { nick: "", level: "", history: [], rejected: new Set(), current: null, guess: null, tStart: 0 };
+  spin(0);
+  viewIntro();
+}
+
+function viewIntro() {
+  $say.textContent = 'สวัสดี! เราชื่อ "น้องเข็ม" ตอบว่าชอบหรือไม่ชอบอะไร แล้วเราจะทายอาชีพที่ใช่ให้';
+  $view.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px">
+      <h1 class="question">มาหาอาชีพในอนาคตกัน</h1>
+      <label>ชื่อเล่น (จะขึ้นบนการ์ดผลลัพธ์)
+        <input type="text" id="nick" maxlength="20" placeholder="เช่น ต้นกล้า" value="${esc(S.nick)}">
+      </label>
+      <div>
+        <div class="note" style="margin-bottom:6px">ตอนนี้เรียนอยู่ระดับไหน</div>
+        <div class="seg" role="group" aria-label="ระดับชั้น">
+          <button id="lv-p" aria-pressed="${S.level === "ประถม"}">ประถม</button>
+          <button id="lv-m" aria-pressed="${S.level === "มัธยม"}">มัธยม</button>
+        </div>
+      </div>
+      <label class="consent"><input type="checkbox" id="ok">
+        <span>ยินยอมตาม PDPA: ต้นแบบนี้ใช้ชื่อเล่นแค่แสดงบนการ์ด ไม่เก็บเลขบัตร ที่อยู่ หรือชื่อโรงเรียน</span></label>
+      <div class="row"><button class="btn" id="go" disabled>เริ่มเลย</button></div>
+    </div>`;
+  const nick = document.getElementById("nick"), ok = document.getElementById("ok"), go = document.getElementById("go");
+  const sync = () => { go.disabled = !(nick.value.trim() && S.level && ok.checked); };
+  for (const [id, lv] of [["lv-p", "ประถม"], ["lv-m", "มัธยม"]]) {
+    document.getElementById(id).onclick = () => {
+      S.level = lv;
+      document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.id === id));
+      sync();
+    };
+  }
+  nick.oninput = ok.onchange = sync;
+  go.onclick = () => {
+    S.nick = nick.value.trim();
+    track("quiz_started", { level: S.level });
+    ask();
+  };
+}
+
+function ask() {
+  const p = posterior(S.history, S.rejected);
+  const top = ranked(p);
+  const n = S.history.length;
+  if (!top.length) return viewGiveUp();
+  if ((top[0].p >= GUESS_AT && n >= MIN_Q) || n >= MAX_Q) {
+    if (!S.guess || S.guess.id !== top[0].c.id) return viewGuess(top[0]);
+  }
+  const q = nextQuestion(p, new Set(S.history.map(h => h[0])));
+  if (!q) return top.length ? viewGuess(top[0]) : viewGiveUp();
+  S.current = q; S.tStart = performance.now();
+  spin(needleDeg + 70 + Math.random() * 160);
+  const lines = ["อืม...", "น่าสนใจ", "เริ่มเห็นภาพแล้ว", "ขอถามอีกนิดนะ", "ใกล้แล้ว!"];
+  $say.textContent = n === 0 ? `ไปกันเลย ${S.nick}!` : lines[Math.min(lines.length - 1, Math.floor(top[0].p * 5))];
+  const conf = Math.round(top[0].p * 100);
+  $view.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px">
+      <div class="qno">คำถามที่ ${n + 1}</div>
+      <h2 class="question">${esc(q.q)}</h2>
+      <div class="answers">${ANSWERS.map((a, i) => `<button class="ans" data-v="${a.v}"><kbd>${i + 1}</kbd>${a.t}</button>`).join("")}</div>
+      <div class="meter"><div class="lbl"><span>ความมั่นใจของน้องเข็ม</span><span>${conf}%</span></div>
+        <div class="bar"><div class="fill" style="width:${conf}%"></div></div></div>
+      <div class="row" style="justify-content:space-between">
+        <button class="link" id="undo" ${n ? "" : "hidden"}>ย้อนกลับข้อก่อน</button>
+        <button class="link" id="restart">เริ่มใหม่</button>
+      </div>
+    </div>`;
+  $view.querySelectorAll(".ans").forEach(b => b.onclick = () => answer(+b.dataset.v));
+  document.getElementById("undo").onclick = () => { S.history.pop(); S.guess = null; ask(); };
+  document.getElementById("restart").onclick = reset;
+}
+
+function answer(v) {
+  const ms = Math.round(performance.now() - S.tStart);
+  S.history.push([S.current.id, v]);
+  track("quiz_question_answered", { q: S.current.id, a: v, ms });
+  ask();
+}
+
+function viewGuess(top) {
+  S.guess = top.c;
+  spin(Math.round(needleDeg / 360) * 360 + 360);
+  $say.textContent = "เราคิดว่ารู้แล้ว!";
+  $view.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px">
+      <div class="qno">หลังจาก ${S.history.length} คำถาม</div>
+      <h2 class="question">อาชีพที่ ${esc(S.nick)} น่าจะชอบคือ <span style="color:var(--accent)">${top.c.name}</span> ใช่ไหม?</h2>
+      <div class="row">
+        <button class="btn" id="yes">ใช่เลย!</button>
+        <button class="btn ghost" id="no">ยังไม่ใช่ ถามต่อ</button>
+      </div>
+    </div>`;
+  document.getElementById("yes").onclick = () => viewResult(top.c, true);
+  document.getElementById("no").onclick = () => {
+    S.rejected.add(top.c.id); S.guess = null;
+    $say.textContent = "โอเค งั้นขอถามเพิ่มอีกหน่อย";
+    if (S.history.length >= MAX_Q + 6 || S.rejected.size >= 4) return viewGiveUp();
+    ask();
+  };
+}
+
+function viewResult(c, confirmed) {
+  const p = posterior(S.history, new Set());
+  const all = ranked(p);
+  const mine = all.find(x => x.c.id === c.id);
+  const pct = Math.max(60, Math.min(99, Math.round(50 + mine.p * 50)));
+  const why = reasons(c, S.history);
+  const alts = all.filter(x => x.c.id !== c.id).slice(0, 3);
+  track("quiz_completed", { career: c.id, confirmed, questions: S.history.length });
+  $say.textContent = confirmed ? "เย้! นี่คือการ์ดของคุณ แคปหน้าจอไปลงสตอรี่ได้เลย" : "นี่คืออาชีพที่ใกล้เคียงที่สุดจากคำตอบของคุณ";
+  $view.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:20px">
+      <article class="card" aria-label="การ์ดผลลัพธ์">
+        <div class="who">${esc(S.nick)} · ${S.level}</div>
+        <div class="pct">ความเข้ากัน ${pct}%</div>
+        <div class="job">${c.name}</div>
+        <div class="chips">${why.map(w => `<span class="chip">${w}</span>`).join("")}</div>
+        <div style="font-family:var(--display);font-size:15px">เส้นทางไปถึง</div>
+        <ol class="path">${c.path.map((s, i) => `<li><span>${i + 1}</span><div>${s}</div></li>`).join("")}</ol>
+        <div class="foot"><span>Acro เข็มทิศอาชีพ</span><span>${S.history.length} คำถาม</span></div>
+      </article>
+      <div class="alts">
+        <h3 style="font-size:17px">อาชีพอื่นที่เข้ากับคุณ</h3>
+        ${alts.map(x => `<div class="alt"><span>${x.c.name}</span><span class="note">${reasons(x.c, S.history).join(" · ") || "ใกล้เคียง"}</span></div>`).join("")}
+      </div>
+      <div class="row">
+        <button class="btn" id="share">แชร์ผลลัพธ์</button>
+        <button class="btn ghost" id="again">เล่นอีกครั้ง</button>
+      </div>
+      <p class="note" id="share-msg" hidden></p>
+    </div>`;
+  document.getElementById("again").onclick = reset;
+  document.getElementById("share").onclick = async () => {
+    const text = `${S.nick} ได้อาชีพ "${c.name}" จาก Acro เข็มทิศอาชีพ (ความเข้ากัน ${pct}%)`;
+    const msg = document.getElementById("share-msg");
+    try { await navigator.clipboard.writeText(text); msg.textContent = "คัดลอกข้อความแล้ว แคปการ์ดด้านบนไปลง IG Story หรือ TikTok ได้เลย"; }
+    catch { msg.textContent = text; }
+    msg.hidden = false;
+    track("result_shared", { career: c.id });
+  };
+}
+
+function viewGiveUp() {
+  const top = ranked(posterior(S.history, new Set())).slice(0, 3);
+  $say.textContent = "ยากจัง! แต่นี่คือ 3 อาชีพที่ใกล้เคียงที่สุด";
+  $view.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px">
+      <h2 class="question">เลือกอาชีพที่ใช่ที่สุด</h2>
+      <div class="answers">${top.map(x => `<button class="ans" data-id="${x.c.id}">${x.c.name}</button>`).join("")}</div>
+      <button class="link" id="restart">เริ่มใหม่</button>
+    </div>`;
+  $view.querySelectorAll("[data-id]").forEach(b => b.onclick = () => viewResult(CAREERS.find(c => c.id === b.dataset.id), false));
+  document.getElementById("restart").onclick = reset;
+}
+
+// ปุ่มลัด 1-5 ตอนตอบคำถาม
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const b = $view.querySelectorAll(".ans[data-v]")[+e.key - 1];
+  if (b) b.click();
+});
+
+reset();
+</script>
