@@ -1,8 +1,17 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Acro เข็มทิศอาชีพ</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
 /* Layout: one centered "stage" card; the compass guide sits on top, the question/answers below, like a game screen */
 :root {
   --bg: #e9f0ee;
@@ -88,6 +97,8 @@ input[type=text] { font: inherit; color: var(--ink); background: var(--bg); bord
 @keyframes fade { from { opacity: .3; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .fade { animation: none; } .compass .needle, .meter .fill { transition: none; } }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -426,3 +437,5 @@ document.addEventListener("keydown", e => {
 
 reset();
 </script>
+</body>
+</html>
